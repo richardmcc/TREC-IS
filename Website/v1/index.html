@@ -1,0 +1,387 @@
+<html>
+<head>
+    <title>TREC Incident Streams Track Homepage</title>
+    <link rel="stylesheet" href="http://dcs.gla.ac.uk/~richardm/TREC_IS/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-2.1.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+    <!-- a jQuery UI theme, here I use "flick" -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/flick/jquery-ui.css">
+
+    <script src="http://dcs.gla.ac.uk/~richardm/vex.combined.min.js"></script>
+    <script>vex.defaultOptions.className = 'vex-theme-os';</script>
+    <link rel="stylesheet" href="http://dcs.gla.ac.uk/~richardm/assets/stylesheets/vex.css"/>
+    <link rel="stylesheet" href="http://dcs.gla.ac.uk/~richardm/assets/stylesheets/vex-theme-os.css"/>
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+	<link rel="stylesheet" href="http://openlayers.org/en/v3.16.0/css/ol.css" type="text/css">
+    <script src="http://openlayers.org/en/v3.16.0/build/ol.js"></script>
+
+	<style type="text/css">
+	
+	body, html {
+    	height: 100%;
+    	background-repeat: no-repeat;
+    	background-image: linear-gradient(rgb(150, 150, 150), rgb(255, 255, 255));
+	}
+
+	</style>
+
+</head>
+
+<body id="myBody"> <!-- onload="openWebSocketConnection()" -->
+
+	<div class="container">
+
+	
+		<!-- Nav Bar -->
+		<div class="row">
+          		<div class="col-md-12">
+
+				<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+  					<a class="navbar-brand" href="#">TREC Incident Streams</a>
+  					<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarColor01" aria-controls="navbarColor01" aria-expanded="false" aria-label="Toggle navigation">
+    						<span class="navbar-toggler-icon"></span>
+  					</button>
+
+  					<div class="collapse navbar-collapse" id="navbarColor01">
+    						<ul class="navbar-nav mr-auto">
+      							<li class="nav-item active">
+        							<a class="nav-link" href="#intro">Enabling Emergency Services with Social Media Data</a>
+      							</li>
+      							<li class="nav-item">
+        							<a class="nav-link" href="#TREC">TREC</a>
+      							</li>
+      							<li class="nav-item">
+        							<a class="nav-link" href="#TRECIS">Task</a>
+      							</li>
+    						</ul>
+
+						<form class="form-inline my-2 my-lg-0">
+      							<button class="btn btn-success my-2 my-sm-0" onclick="location.href='#GetInvolved'">Get involved!</button>
+    						</form>
+  					</div>
+				</nav>
+
+			
+			</div>
+
+		</div>
+
+		<!-- Track Intro -->
+		<div class="row" id="intro">
+          		<div class="col-md-4" style="padding-top: 15px">
+
+				<div class="card">
+  					<h5 class="card-header">Emergencies</h5>
+  					<img style="height: 200px; width: 100%; display: block;" src="http://dcs.gla.ac.uk/~richardm/TREC_IS/frantzou-fleurine-16979.jpg" alt="Card image">
+  					<div class="card-body">
+    						<p class="card-text">Internationally, civil protection, police forces and emergency response agencies are under increasing pressure to more quickly and effectively respond to emergency situations. Moreover, such emergencies are common and recurring. For example, 50,000 people per-year on average die during natural disasters internationally. </p>
+    						<!-- <a href="#" class="card-link">Card link</a>
+    						<a href="#" class="card-link">Another link</a> -->
+  					</div>
+  					<!--<div class="card-footer text-muted">
+    						2 days ago
+  					</div> -->
+				</div>
+
+			</div>
+
+
+			<div class="col-md-4" style="padding-top: 15px">
+
+				<div class="card">
+  					<h5 class="card-header">Social Media</h5>
+  					<img style="height: 200px; width: 100%; display: block;" src="http://dcs.gla.ac.uk/~richardm/TREC_IS/jordan-mcqueen-10434.jpg" alt="Card image">
+  					<div class="card-body">
+    						<p class="card-text">The mass adoption of mobile internet-enabled devices paired with wide-spread use of social media platforms for communication and coordination has created ways for the public on-the-ground to contact response services. Moreover, a recent study reported that 63% of people expect responders to answer calls for help on social media.  </p>
+    						<!-- <a href="#" class="card-link">Card link</a>
+    						<a href="#" class="card-link">Another link</a> -->
+  					</div>
+  					<!--<div class="card-footer text-muted">
+    						2 days ago
+  					</div> -->
+				</div>
+
+			</div>
+
+			<div class="col-md-4" style="padding-top: 15px">
+
+				<div class="card">
+  					<h5 class="card-header">The Challenge</h5>
+  					<img style="height: 200px; width: 100%; display: block;" src="http://dcs.gla.ac.uk/~richardm/TREC_IS/OldBoard.png" alt="Card image">
+  					<div class="card-body">
+    						<p class="card-text"> With the rise of social media, emergency service operators are now expected to monitor those channels and answer questions from the public However, they do not have adequate tools or manpower to effectively monitor social media, due to the large volume of information posted on these platforms and the need to categorise, cross-reference and verify that information.  </p>
+    						<!-- <a href="#" class="card-link">Card link</a>
+    						<a href="#" class="card-link">Another link</a> -->
+  					</div>
+  					<!--<div class="card-footer text-muted">
+    						2 days ago
+  					</div> -->
+				</div>
+
+			</div>
+
+		</div>
+
+		<!-- Line Break -->
+		<!-- <div class="row">
+			<div class="col-md-2" style="padding-top: 15px"></div>
+          		<div class="col-md-8" style="padding-top: 15px">
+				<div class="line" style="height: 3px; background-image: linear-gradient(rgb(68, 76, 85), rgb(125, 125, 125))"></div>
+			</div>
+			<div class="col-md-2" style="padding-top: 15px"></div>
+		</div> -->
+
+
+		<!-- Line Break -->
+		<div class="row" id="TREC">
+			<div class="col-md-2" style="padding-top: 30px"></div>
+          		<div class="col-md-8" style="padding-top: 30px">
+				<div class="card text-white bg-warning">
+  					<div class="card-body" style="padding: 8px">
+      						<h4 class="text-center" style="margin-bottom: 0px">Introducing TREC</h4>
+  					</div>
+				</div>
+			</div>
+			<div class="col-md-2" style="padding-top: 30px"></div>
+		</div>
+
+
+		<!-- TREC -->
+		<div class="row" >
+          		<div class="col-md-5" style="padding-top: 15px">
+
+				<div class="card">
+  					<h5 class="card-header">Text Retrieval Conference</h5>
+
+					<div class="card-body">
+    						<p class="card-text">The <a href="http://trec.nist.gov/">Text Retrieval Conference</a> is a combined conference and evaluation campaign that aims to encourage research into information retrieval technologies from large test collections. It is co-sponsored by the <a href="https://www.nist.gov/">National Institute of Standards and Technology (NIST)</a> Information Technology Laboratory's (ITL) Retrieval Group of the Information Access Division (IAD), and has run annually for over 25 years.</p>
+    						<!-- <a href="#" class="card-link">Card link</a>
+    						<a href="#" class="card-link">Another link</a> -->
+  					</div>
+
+				</div>
+
+			</div>
+
+			<div class="col-md-7" style="padding-top: 15px">
+
+				<div class="card">
+  					<h5 class="card-header">TREC Tracks</h5>
+
+					<div class="card-body">
+    						<p class="card-text">TREC consists of a set tracks, areas of focus in which particular retrieval tasks are defined. The tracks serve several purposes. First, tracks act as incubators for new research areas: the first running of a track often defines what the problem really is, and a track creates the necessary infrastructure (test collections, evaluation methodology, etc.) to support research on its task. The tracks also demonstrate the robustness of core retrieval technology in that the same techniques are frequently appropriate for a variety of tasks. Finally, they make TREC attractive to a broader community by providing tasks that match the research interests of more groups. </p>
+    						<!-- <a href="#" class="card-link">Card link</a>
+    						<a href="#" class="card-link">Another link</a> -->
+  					</div>
+				</div>
+
+			</div>
+
+
+		</div>
+
+		<!-- Line Break -->
+		<div class="row" id="TRECIS">
+			<div class="col-md-2" style="padding-top: 30px"></div>
+          		<div class="col-md-8" style="padding-top: 30px">
+				<div class="card text-white bg-warning">
+  					<div class="card-body" style="padding: 8px">
+      						<h4 class="text-center" style="margin-bottom: 0px">Incident Streams Track</h4>
+  					</div>
+				</div>
+			</div>
+			<div class="col-md-2" style="padding-top: 30px"></div>
+		</div>
+
+
+		<!-- TREC -->
+		<div class="row">
+          		<div class="col-md-3" style="padding-top: 15px">
+
+				<div class="card">
+  					<h5 class="card-header">TREC-IS</h5>
+
+					<div class="card-body">
+    						<p class="card-text">Incident Streams is a TREC track designed to bring together academia and industry to research technologies to automaticaly process social media streams during emergency situations with the aim of categorizing information and aid requests made on social media for emergency service operators.</p>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="col-md-6" style="padding-top: 15px">
+
+				<div class="card">
+  					<h5 class="card-header">Task Definition</h5>
+
+  					<div class="card-body">
+    						<p class="card-text">The TREC-IS task is to produce a series of curated feeds containing social media posts, where each feed corresponds to a particular type of information request, aid request, or report containing a particular type of information. These ‘types’ are defined based on existing hierarchical incident management information ontologies, such as MOAC (Management of a Crisis), For instance, for a flash flooding event, feeds might include, ‘requests for food/water’, ‘reports of road blockages’, and ‘evacuation requests’. In this way, during an emergency, individual emergency management operators and other stakeholders can register to access to the subset of feeds within their domain of responsibility providing access to relevant social media content.</p>
+    						<!-- <a href="#" class="card-link">Card link</a>
+    						<a href="#" class="card-link">Another link</a> -->
+  					</div>
+  					<!--<div class="card-footer text-muted">
+    						2 days ago
+  					</div> -->
+				</div>
+
+			</div>
+
+			<div class="col-md-3" style="padding-top: 15px">
+
+				<div class="card">
+					
+					<img style="height: 150px; width: 100%; display: block;" src="http://dcs.gla.ac.uk/~richardm/TREC_IS/freestocks-org-72172.jpg" alt="Card image">
+					<img style="height: 150px; width: 100%; display: block;" src="http://dcs.gla.ac.uk/~richardm/TREC_IS/luca-bravo-217276.jpg" alt="Card image">
+				</div>
+			</div>
+		</div>
+
+		<div class="row">
+          		<div class="col-md-12" style="padding-top: 15px">
+
+				<div class="card">
+  					<h5 class="card-header">Task Visualisation</h5>
+					<img style="height: 400px; width: 100%; display: block;" src="http://dcs.gla.ac.uk/~richardm/TREC_IS/TRECISTask.png" alt="Card image">
+				</div>
+			</div>
+		</div>
+
+		<!-- Line Break -->
+		<!--<div class="row" id="Timeline">
+			<div class="col-md-2" style="padding-top: 30px"></div>
+          		<div class="col-md-8" style="padding-top: 30px">
+				<div class="card text-white bg-dark">
+  					<div class="card-body" style="padding: 8px">
+      						<h4 class="text-center" style="margin-bottom: 0px">Timeline</h4>
+  					</div>
+				</div>
+			</div>
+			<div class="col-md-2" style="padding-top: 30px"></div>
+		</div>
+
+		<div class="row">
+
+			<div class="col-md-3" style="padding-top: 15px">
+
+				<div class="card">
+  					<h5 class="card-header">TREC-IS</h5>
+
+					<div class="card-body">
+    						<p class="card-text">The current edition of the track is 2017-2018. The track organisers release </p>
+					</div>
+				</div>
+
+			</div>
+
+          		<div class="col-md-9" style="padding-top: 15px">
+
+				<div class="card">
+					<img style="height: 400px; width: 100%; display: block;" src="http://dcs.gla.ac.uk/~richardm/TREC_IS/Timeline.png" alt="Card image">
+				</div>
+			</div>
+		</div> -->
+
+
+		<!-- Line Break -->
+		<div class="row" id="GetInvolved">
+			<div class="col-md-2" style="padding-top: 30px"></div>
+          		<div class="col-md-8" style="padding-top: 30px">
+				<div class="card text-white bg-warning">
+  					<div class="card-body" style="padding: 8px">
+      						<h4 class="text-center" style="margin-bottom: 0px">Interested?</h4>
+  					</div>
+				</div>
+			</div>
+			<div class="col-md-2" style="padding-top: 30px"></div>
+		</div>
+
+
+		<div class="row" id="intro">
+          		<div class="col-md-4" style="padding-top: 15px">
+
+				<div class="card">
+  					<h5 class="card-header">Track Status</h5>
+  					<img style="height: 200px; width: 100%; display: block;" src="http://dcs.gla.ac.uk/~richardm/TREC_IS/stefan-stefancik-257625.jpg" alt="Card image">
+  					<div class="card-body">
+    						<p class="card-text">The TREC-IS track is currently in its set-up phase for the 2017-2018 edition. We are currently building the test collection that participants will experiment with, with a target release in early 2018.</p>
+    						<!-- <a href="#" class="card-link">Card link</a>
+    						<a href="#" class="card-link">Another link</a> -->
+  					</div>
+  					<!--<div class="card-footer text-muted">
+    						2 days ago
+  					</div> -->
+				</div>
+
+			</div>
+
+			<div class="col-md-4" style="padding-top: 15px">
+
+				<div class="card">
+  					<h5 class="card-header">Get Updates</h5>
+  					<img style="height: 200px; width: 100%; display: block;" src="http://dcs.gla.ac.uk/~richardm/TREC_IS/forum.png" alt="Card image">
+  					<div class="card-body">
+    						<p class="card-text">You can join our Google Group with the button below to recieve updates and ask questions about the track. </p>
+    						<button type="button" class="btn btn-primary btn-lg btn-block" onclick="location.href='https://groups.google.com/forum/#!forum/trec-is'">> Join Group <</button>
+  					</div>
+  					<!--<div class="card-footer text-muted">
+    						2 days ago
+  					</div> -->
+				</div>
+
+			</div>
+
+			<div class="col-md-4" style="padding-top: 15px">
+
+				<div class="card">
+  					<h5 class="card-header">Links</h5>
+  					<div class="card-body">
+    						<button type="button" class="btn btn-primary btn-lg btn-block" onclick="location.href='http://dcs.gla.ac.uk/~richardm/TREC_IS/TREC-IS-Proposal.pdf'">Original Proposal (pdf)</button>
+						<button type="button" class="btn btn-primary btn-lg btn-block" onclick="location.href='http://dcs.gla.ac.uk/~richardm/TREC_IS/TREC2017-WorkshopPlanning.pdf'">2017 Planning Workshop Slides (pdf)</button>
+  					</div>
+  					<!--<div class="card-footer text-muted">
+    						2 days ago
+  					</div> -->
+				</div>
+
+			</div>
+			
+
+		</div>
+
+		<div class="row" id="ack">
+          		<div class="col-md-12" style="padding-top: 45px; padding-bottom: 45px">
+
+				<div class="card">
+  					<h5 class="card-header">Supported By</h5>
+					<div class="card-body">
+						<img style="height: 100px; width: 25%; display: inline;" src="http://dcs.gla.ac.uk/~richardm/TREC_IS/nistident_fleft_150ppi.jpg" alt="Card image" onclick="location.href='https://www.nist.gov/'">
+						<img style="height: 100px; width: 16%; display: inline;" src="http://dcs.gla.ac.uk/~richardm/TREC_IS/pscd.png" alt="Card image" onclick="location.href='https://www.nist.gov/ctl/pscr'">
+						<img style="height: 75px; width: 45%; display: inline;" src="http://terrier.org/img/CompScience_colour_transparent_small.png" alt="Card image" onclick="location.href='https://www.gla.ac.uk/schools/computing/'">
+
+
+					</div>
+				</div>
+
+				<div class="card border-info">
+  					<div class="card-body">
+						
+      						<footer>Copyright © 2017 University of Glasgow | All Rights Reserved</footer>
+   
+  					</div>
+				</div>
+			</div>
+		</div>
+		
+
+
+
+       </div>
+
+
+       
+</body>
+
+</html>
+    
