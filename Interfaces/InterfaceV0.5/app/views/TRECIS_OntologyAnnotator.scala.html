@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+
+@import play.mvc.Http.Context.Implicit._
+
+<html>
+  <head>
+    <title>Emergency Analysis Identification and Management System (E-AIMS)</title>
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+    <script src="https://code.jquery.com/jquery-2.1.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+    <!-- a jQuery UI theme, here I use "flick" -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/flick/jquery-ui.css">
+	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/digitalclock.css")">
+
+    <script src="@routes.Assets.at("javascripts/vex.combined.min.js")"></script>
+    <script>vex.defaultOptions.className = 'vex-theme-os';</script>
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/vex.css")"/>
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/vex-theme-os.css")"/>
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+	<link rel="stylesheet" href="http://openlayers.org/en/v3.16.0/css/ol.css" type="text/css">
+    <script src="http://openlayers.org/en/v3.16.0/build/ol.js"></script>
+
+	<style type="text/css">
+	
+	body, html {
+    	height: 100%;
+    	background-repeat: no-repeat;
+    	background-image: linear-gradient(rgb(153, 204, 255), rgb(255, 255, 255));
+	}
+
+.card-container.card {
+    max-width: 350px;
+    padding: 40px 40px;
+}
+
+.btn {
+    font-weight: 700;
+    height: 36px;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: default;
+}
+
+/*
+ * Card component
+ */
+.card {
+    background-color: #F7F7F7;
+    /* just in case there no content*/
+    padding: 20px 25px 30px;
+    margin: 0 auto 25px;
+    margin-top: 50px;
+    /* shadows and rounded borders */
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    -moz-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+}
+
+.profile-img-card {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 10px;
+    display: block;
+    -moz-border-radius: 50%;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+}
+
+/*
+ * Form styles
+ */
+.profile-name-card {
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    margin: 10px 0 0;
+    min-height: 1em;
+}
+
+.reauth-email {
+    display: block;
+    color: #404040;
+    line-height: 2;
+    margin-bottom: 10px;
+    font-size: 14px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.form-signin #inputEmail,
+.form-signin #inputPassword {
+    direction: ltr;
+    height: 44px;
+    font-size: 16px;
+}
+
+.form-signin input[type=email],
+.form-signin input[type=password],
+.form-signin input[type=text],
+.form-signin button {
+    width: 100%;
+    display: block;
+    margin-bottom: 10px;
+    z-index: 1;
+    position: relative;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.form-signin .form-control:focus {
+    border-color: rgb(104, 145, 162);
+    outline: 0;
+    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(104, 145, 162);
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075),0 0 8px rgb(104, 145, 162);
+}
+
+.btn.btn-signin {
+    /*background-color: #4d90fe; */
+    background-color: rgb(104, 145, 162);
+    /* background-color: linear-gradient(rgb(104, 145, 162), rgb(12, 97, 33));*/
+    padding: 0px;
+    font-weight: 700;
+    font-size: 14px;
+    height: 36px;
+    -moz-border-radius: 3px;
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    border: none;
+    -o-transition: all 0.218s;
+    -moz-transition: all 0.218s;
+    -webkit-transition: all 0.218s;
+    transition: all 0.218s;
+}
+
+.btn.btn-signin:hover,
+.btn.btn-signin:active,
+.btn.btn-signin:focus {
+    background-color: rgb(12, 97, 33);
+}
+
+.forgot-password {
+    color: rgb(104, 145, 162);
+}
+
+.forgot-password:hover,
+.forgot-password:active,
+.forgot-password:focus{
+    color: rgb(12, 97, 33);
+}
+	
+	
+	.caption div {
+    box-shadow: 0 0 5px #C8C8C8;
+    transition: all 0.3s ease 0s;
+}
+.img-circle {
+    border-radius: 50%;
+}
+.img-circle {
+    border-radius: 0;
+}
+
+.ratio {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    height: 0;
+    padding-bottom: 100%;
+    position: relative;
+    width: 100%;
+}
+.img-circle {
+    border-radius: 50%;
+}
+.img-responsive {
+    display: block;
+    height: auto;
+    max-width: 100%;
+}
+
+	</style>
+
+	</head>
+
+  	<body id="myBody" wsdata="@routes.TRECIS_OntologyAnnotation.ws.webSocketURL(request)" onload="openWebSocketConnection()">
+
+		<div class="container">
+
+		<div class="row">
+          <div class="col-md-12">
+
+			<div class="list-group">
+  				<div href="#" class="list-group-item active">
+    				<h4 class="list-group-item-heading">TREC-IS</h4>
+    				<p class="list-group-item-text">v1 Ontology and Keyword Annotator</p>
+  				</div>
+			</div>
+		</div>
+
+		</div>
+
+
+		<div class="row">
+        	<div class="col-md-6">
+				<ul class="list-group">
+  					<li class="list-group-item active" id="tweetText"></li>
+  					<li class="list-group-item" id="genericKeyTerms"></li>
+  					<li class="list-group-item" id="tweet"></li>
+				</ul>
+			</div>
+			<div class="col-md-6">
+				<ul class="list-group" id="categories">
+				</ul>
+			</div>
+         </div>
+
+       <div id="info" style="visibility: hidden" ></div>
+       </div>
+       
+       
+       <script type="text/javascript">
+       
+       var ws;
+       
+       function openWebSocketConnection() {
+    	   
+    	   var wsURL = document.getElementById("myBody").getAttribute("wsdata");
+		   var selectedTopLevelCategory;
+		   var selectedSecondLevelCategory;
+		   var selectedThirdLevelCategory;
+		   var currentTweetId;
+		   var currentText;
+		   var currentGenericKeyterms;
+		   var currentEventKeyterms;
+		   
+    	   
+           ws = new WebSocket(wsURL);
+           ws.onmessage = function (event) {
+               var message;
+               message = JSON.parse(event.data);
+               switch (message.messagetype) {
+                   case "init":
+                		
+                	   	ws.send(JSON.stringify({
+                           messagetype: "getNextTweet"
+                       	}));
+                	   
+                    	break;
+                   case "nextTweet":
+                   		renderTweet(message);
+                   		break;
+                   case "topLevelCategories":
+                  		renderTopLevelCategories(message);
+                  		break;
+                   case "secondLevelCategories":
+                 		renderSecondLevelCategories(message);
+                 		break;
+                   case "thirdLevelCategories":
+                		renderThirdLevelCategories(message);
+                		break;
+                   default:
+                       return console.log(message);
+               }
+               
+               
+           };
+           
+       }
+       
+       function clear() {
+    	   selectedTopLevelCategory = "";
+    	   selectedSecondLevelCategory = "";
+    	   selectedThirdLevelCategory = "";
+    	   currentTweetId = "";
+    	   currentText = "";
+    	   currentGenericKeyterms = "";
+    	   currentEventKeyterms = "";
+    	   
+    	   while (document.getElementById('genericKeyTerms').hasChildNodes()) {
+               document.getElementById('genericKeyTerms').removeChild(document.getElementById('genericKeyTerms').lastChild);
+           }
+    	   
+    	   while (document.getElementById('tweet').hasChildNodes()) {
+               document.getElementById('tweet').removeChild(document.getElementById('tweet').lastChild);
+           }
+
+       }
+       
+       function renderTweet(message) {
+    	   console.log("renderTweet");
+    	   clear();
+    	   
+    	   currentTweetId = message.tweetid;
+    	   currentText = message.text;
+    	   
+    	   document.getElementById('tweetText').innerHTML = currentText;
+    	   
+    	   var nm = currentText.split(" ");
+          	
+          	
+       	   for ( var i = 0; i < nm.length; i++ ) {
+       		
+       	   		var word = nm[i];
+       	   		var label = document.createElement('li');
+       	   		label.className = "label label-info";
+       	 		label.setAttribute("id", word);
+       	 		label.setAttribute("style", "display:inline-block");
+       			label.innerHTML = word;
+       			label.addEventListener("click", function(event){
+       				addGenericKeyTerm(event.target.getAttribute("id"));
+    			}, false); 
+       			label.addEventListener('contextmenu', function(ev) {
+       			    ev.preventDefault();
+       			 	addEventKeyTerm(ev.target.getAttribute("id"));
+       			    return false;
+       			}, false);
+       			
+            	document.getElementById('genericKeyTerms').appendChild(label);
+       	   }
+       	   
+       	   var div = document.createElement('div');
+       	   div.className = "myTweetClass";
+       	   div.setAttribute("tweetID", currentTweetId);
+       	   document.getElementById('tweet').appendChild(div);
+       	   renderTweets("myTweetClass");
+    	   
+    	   ws.send(JSON.stringify({
+               messagetype: "getTopLevelCategories"
+           }));
+       }
+       
+	   function renderTopLevelCategories(message) {
+		   console.log("renderTopLevelCategories");
+		   while (document.getElementById('categories').hasChildNodes()) {
+               document.getElementById('categories').removeChild(document.getElementById('categories').lastChild);
+           }
+		   var nm = message.categories.split(",");
+       	
+       	
+       	   for ( var i = 0; i < nm.length; i++ ) {
+       		
+       	   		var name = nm[i];
+       	   		var li = document.createElement('li');
+    			li.className = "list-group-item";
+    			li.setAttribute("id", name);
+    			li.innerHTML = name;
+    			li.addEventListener("click", function(event){
+    				selectTopLevelCategory(event.target.getAttribute("id"));
+    			}, false); 
+            	document.getElementById('categories').appendChild(li);
+       	   }
+       }
+	   
+	   function selectTopLevelCategory(cat) {
+		   console.log("selectTopLevelCategory "+cat);
+		   selectedTopLevelCategory = cat;
+		   
+		   ws.send(JSON.stringify({
+               messagetype: "getSecondLevelCategories",
+               topLevelCategory: selectedTopLevelCategory
+           }));
+	   }
+	   
+	   function renderSecondLevelCategories(message) {
+		   console.log("renderSecondLevelCategories");
+		   while (document.getElementById('categories').hasChildNodes()) {
+               document.getElementById('categories').removeChild(document.getElementById('categories').lastChild);
+           }
+		   var nm = message.categories.split(",");
+       	
+       	
+       	   for ( var i = 0; i < nm.length; i++ ) {
+       		
+       	   		var name = nm[i];
+       	   		var li = document.createElement('li');
+    			li.className = "list-group-item";
+    			li.setAttribute("id", name);
+    			li.innerHTML = name;
+    			li.addEventListener("click", function(event){
+    				selectSecondLevelCategory(event.target.getAttribute("id"));
+    			}, false); 
+            	document.getElementById('categories').appendChild(li);
+       	   }
+		   
+       }
+	   
+	   function selectSecondLevelCategory(cat) {
+		   console.log("selectSecondLevelCategory "+cat);
+		   selectedSecondLevelCategory = cat;
+		   
+		   ws.send(JSON.stringify({
+               messagetype: "getThirdLevelCategories",
+               topLevelCategory: selectedTopLevelCategory,
+               secondLevelCategory: selectedSecondLevelCategory
+           }));
+	   }
+	   
+       function renderThirdLevelCategories(message) {
+    	   console.log("renderThirdLevelCategories");
+    	   
+    	   while (document.getElementById('categories').hasChildNodes()) {
+               document.getElementById('categories').removeChild(document.getElementById('categories').lastChild);
+           }
+		   var nm = message.categories.split(",");
+       	
+       	
+       	   for ( var i = 0; i < nm.length; i++ ) {
+       		
+       	   		var name = nm[i];
+       	   		var li = document.createElement('li');
+    			li.className = "list-group-item";
+    			li.setAttribute("id", name);
+    			li.innerHTML = name;
+    			li.addEventListener("click", function(event){
+    				save(event.target.getAttribute("id"));
+    			}, false); 
+            	document.getElementById('categories').appendChild(li);
+       	   }
+       }
+       
+	   function save(cat) {
+		   console.log("save "+cat);
+		   
+		   ws.send(JSON.stringify({
+               messagetype: "saveLabel",
+               topLevelCategory: selectedTopLevelCategory,
+               secondLevelCategory: selectedSecondLevelCategory,
+               thirdLevelCategory: cat,
+               tweetid: currentTweetId,
+               text: currentText,
+               generalKeyTerms: currentGenericKeyterms,
+               eventKeyTerms: currentEventKeyterms
+           }));
+		   
+		   ws.send(JSON.stringify({
+               messagetype: "getNextTweet"
+           }));
+       }
+	   
+	   function addGenericKeyTerm(word) {   
+		   console.log("addGenericKeyTerm "+word);
+		   
+		   if (currentGenericKeyterms.length>0) currentGenericKeyterms=currentGenericKeyterms+",";
+		   currentGenericKeyterms=currentGenericKeyterms+word;
+		   
+		   document.getElementById(word).className="label label-success"; 
+	   }
+	   
+	   function addEventKeyTerm(word) {   
+		   console.log("addEventKeyTerm "+word);
+		   
+		   if (currentEventKeyterms.length>0) currentEventKeyterms=currentEventKeyterms+",";
+		   currentEventKeyterms=currentEventKeyterms+word;
+		   
+		   document.getElementById(word).className="label label-warning"; 
+	   }
+	   
+	   window.twttr = (function (d, s, id) {
+           var js, fjs = d.getElementsByTagName(s)[0],
+                   t = window.twttr || {};
+           if (d.getElementById(id))
+               return t;
+           js = d.createElement(s);
+           js.id = id;
+           js.src = "https://platform.twitter.com/widgets.js";
+           fjs.parentNode.insertBefore(js, fjs);
+           t._e = [];
+           t.ready = function (f) {
+               t._e.push(f);
+           };
+           return t;
+       }(document, "script", "twitter-wjs"));
+       
+	   function renderTweets(divclass) {
+
+           var x = document.getElementsByClassName(divclass);
+           var i;
+           for (i = 0; i < x.length; i++) {
+               var id = x[i].getAttribute("tweetID");
+               twttr.widgets.createTweet(
+                       id, x[i],
+                       {
+                           conversation: 'none', // or all
+//                         cards: 'hidden', // or visible
+                           linkColor: '#cc0000', // default is blue
+                           theme: 'light'    // or dark
+                       })
+                       .then(function (el) {
+                           el.contentDocument.querySelector(".footer").style.display = "none";
+                       });
+
+           }
+       }
+	   
+       </script>
+       
+       
+       </body>
+
+</html>
