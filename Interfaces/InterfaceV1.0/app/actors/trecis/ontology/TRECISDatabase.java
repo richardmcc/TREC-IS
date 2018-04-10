@@ -234,6 +234,14 @@ public class TRECISDatabase {
 		}
 	}
 	
+	public int getRemainingForUserInEvent(String annotatorID, String eventIdentifier) {
+		String tableName = annotatorID+"-"+eventIdentifier+"-Queue";
+		
+		HTreeMap<String, String> tweetTable = tweetTables.get(tableName);
+		if (tweetTable.size()==0) return 0;
+		else return tweetTable.size();
+	}
+	
 	public boolean markTweetAsIrrelevant(String annotatorID, String eventIdentifier, String tweetID) {
 		
 		// Stage 1: remove it from the queue to be annotated

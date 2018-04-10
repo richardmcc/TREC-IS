@@ -49,7 +49,7 @@ public class StreamSimulatorConnector {
 		
 		String jsonReturn = newClient()
 		.target(simulatorHost)
-		.path("streamsimulatorstatus")
+		.path("/")
 		.request(MediaType.APPLICATION_JSON_TYPE)
 		.get(String.class);
 		

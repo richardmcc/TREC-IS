@@ -35,7 +35,8 @@ public class TRECIS_EventsSelect extends Controller{
 				
 				String dbFile = Play.application().configuration().getString("trecis.dbFile");
 				String streamSimulatorHost = Play.application().configuration().getString("trecis.streamSimulatorHost");
-				final ActorRef trecisActor = Akka.system().actorOf(Props.create(OntologyAnnotationActorV1.class, dbFile, streamSimulatorHost, out));
+				String ontologyDIR = Play.application().configuration().getString("trecis.ontologyDIR");
+				final ActorRef trecisActor = Akka.system().actorOf(Props.create(OntologyAnnotationActorV1.class, dbFile, streamSimulatorHost, ontologyDIR, out));
 				
 				
 				ObjectNode jsonMessage = Json.newObject();

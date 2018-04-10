@@ -9,10 +9,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.gson.JsonObject;
-import java.util.Iterator;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.File;
+import java.lang.StringBuilder;
 
 import dataimport.ImportV0Labelling;
 
@@ -23,12 +29,42 @@ public class OntologyAnnotationActorV1 extends UntypedActor {
 	ObjectWriter oWriter = new ObjectMapper().writerWithDefaultPrettyPrinter();
 	StreamSimulatorConnector streamSimulatorConnector;
 	
-	public OntologyAnnotationActorV1(String dbFile, String streamSimulatorHost, WebSocket.Out<JsonNode> out) {
+	Map<String,String> ontologies = new HashMap<String,String>();
+	
+	public OntologyAnnotationActorV1(String dbFile, String streamSimulatorHost, String ontologyDIR, WebSocket.Out<JsonNode> out) {
 		this.out = out;
 		
 		if (StaticDatabase.db==null) StaticDatabase.db = new TRECISDatabase(dbFile);
 		
 		streamSimulatorConnector = new StreamSimulatorConnector(streamSimulatorHost);
+		
+		loadOntologies(ontologyDIR);
+	}
+	
+	public void loadOntologies(String ontologyDIR) {
+		String[] files = new File(ontologyDIR).list();
+		
+		try {
+		for (String s : files) {
+			String type = s.replace(".", "#").split("#")[1];
+			
+			StringBuilder json = new StringBuilder();
+			
+			BufferedReader br = new BufferedReader(new FileReader(ontologyDIR+"/"+s));
+			String line;
+			while ((line = br.readLine())!=null) {
+				json.append(line);
+				json.append(" ");
+			}
+			
+			br.close();
+			
+			ontologies.put(type, json.toString().trim());
+		}
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	@Override
@@ -332,6 +368,12 @@ public class OntologyAnnotationActorV1 extends UntypedActor {
 		String eventIdentifier = ((JsonNode)message).get("eventIdentifier").asText();
 		
 		String tweetJSONORNull = StaticDatabase.db.getNextTweetForUserInEvent(annotatorID, eventIdentifier);
+		int remaining = StaticDatabase.db.getRemainingForUserInEvent(annotatorID, eventIdentifier);
+		
+		String eventType = "default";
+		for (String typename : ontologies.keySet()) {
+			if (eventIdentifier.toLowerCase().contains(typename.toLowerCase())) eventType=typename;
+		}
 		
 		if (tweetJSONORNull==null) {
 			{ObjectNode msg = Json.newObject();
@@ -342,6 +384,8 @@ public class OntologyAnnotationActorV1 extends UntypedActor {
 			{ObjectNode msg = Json.newObject();
 			msg.put("messagetype", "nextTweet");
 			msg.put("tweetJSON", tweetJSONORNull);
+			msg.put("categoriesJSON", ontologies.get(eventType));
+			msg.put("remaining", String.valueOf(remaining));
 			out.write(msg);}
 		}
 		
