@@ -32,7 +32,7 @@ libraryDependencies ++= Seq(
 
 resolvers += "typesafe2" at "http://repo.typesafe.com/typesafe/maven-releases/"
 resolvers += "aspectj" at "http://repo1.maven.org/maven2/"
-resolvers += "richardlocal" at "file:///local/tr.kba/.m2/"
-
+resolvers += "super" at "http://demos.terrier.org/artifactory/ext-release-local/"
+resolvers += "terrier" at "http://demos.terrier.org/artifactory/libs-snapshot-local/"
 
 fork in run := true
