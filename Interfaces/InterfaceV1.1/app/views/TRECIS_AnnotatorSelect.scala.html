@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+
+@import play.mvc.Http.Context.Implicit._
+
+<html>
+  <head>
+    <title>TREC Incident Streams - Assessment Interface</title>
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+    <script src="https://code.jquery.com/jquery-2.1.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+    <!-- a jQuery UI theme, here I use "flick" -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/flick/jquery-ui.css">
+
+    <script src="@routes.Assets.at("javascripts/vex.combined.min.js")"></script>
+    <script>vex.defaultOptions.className = 'vex-theme-os';</script>
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/vex.css")"/>
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/vex-theme-os.css")"/>
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+
+	<link rel="stylesheet" href="http://openlayers.org/en/v3.16.0/css/ol.css" type="text/css">
+    <script src="http://openlayers.org/en/v3.16.0/build/ol.js"></script>
+
+	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/default.css")"/>
+	</head>
+
+  	<body id="myBody" wsdata="@routes.TRECIS_AnnotatorSelect.ws.webSocketURL(request)" onload="openWebSocketConnection()">
+
+		<div class="container">
+
+		<div class="row">
+          <div class="col-md-12">
+
+			<div class="list-group">
+  				<div href="#" class="list-group-item active">
+    				<h4 class="list-group-item-heading">TREC-IS</h4>
+    				<p class="list-group-item-text">v1 Ontology and Keyword Annotator</p>
+  				</div>
+			</div>
+		</div>
+
+		</div>
+
+
+		<div class="row">
+        	<div class="col-md-6">
+  					
+  						<div class="card">
+  							<div class="card-body">
+  								
+  									<div class="form-group">
+  									    <label for="usernameinput1">Enter your Assessor ID</label>
+  									    <input type="text" class="form-control" id="usernameinput1" aria-describedby="usernameinput1Help" placeholder="Enter ID">
+  									    <small id="usernameinput1Help" class="form-text text-muted">Please enter your assessor id, we use this to track what tweets you have assessed.</small>
+  									</div>
+  									<button class="btn btn-primary" onclick="loginUser()">Submit</button>
+  								
+  							</div>
+  						</div>
+			</div>
+			<div class="col-md-6">
+				<ul class="list-group" id="events">
+				</ul>
+			</div>
+         </div>
+
+       <div id="info" style="visibility: hidden" ></div>
+       </div>
+       
+       
+       <script type="text/javascript">
+       
+       var ws;
+       
+       function openWebSocketConnection() {
+    	   
+    	   var wsURL = document.getElementById("myBody").getAttribute("wsdata");
+		   
+           ws = new WebSocket(wsURL);
+           ws.onmessage = function (event) {
+               var message;
+               message = JSON.parse(event.data);
+               switch (message.messagetype) {
+                   case "init":
+                	   ws.send(JSON.stringify({
+                       	messagetype: "deleteUser",
+                       	annotatorID: "test"
+                   	   }));
+                	   
+                    	break;
+                   case "userLoggedIn":
+                	   openNextPage(message);
+                   	   break;
+                   default:
+                       return console.log(message);
+               }
+               
+               
+           };
+           
+           
+           
+           
+       }
+       
+       function loginUser() {
+   	   		ws.send(JSON.stringify({
+            	messagetype: "loginUser",
+            	annotatorID: document.getElementById("usernameinput1").value
+        	}));
+       }
+       
+       function openNextPage(message) {
+    	   window.open("/trecis/events?annotatorID="+message.annotatorID,"_self"); 
+       }
+	   
+       </script>
+       
+       
+       </body>
+
+</html>

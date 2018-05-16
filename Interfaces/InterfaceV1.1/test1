@@ -1,0 +1,152 @@
+{
+  "eventsAnnotated" : [ {
+    "identifier" : "fireColorado2012",
+    "name" : "CrisisLex26 2012 Colorado wildfires",
+    "description" : "The 2012 Colorado wildfires were an unusually devastating series of Colorado wildfires, including several separate fires that occurred throughout June, July, and August 2012. At least 34,500 residents were evacuated in June.",
+    "type" : "Unknown",
+    "imageURL" : "https://upload.wikimedia.org/wikipedia/commons/e/ec/High_Park_Wildfire_Arapaho_and_Roosevelt_National_Forests_June_10%2C_2012.jpg",
+    "annotationTableName" : "test1-fireColorado2012"
+  } ],
+  "id" : "test1"
+}
+{"events": [
+{"eventid": "fireColorado2012",
+{"tweets": [
+{
+  "postID" : "212938694594789377",
+  "timestamp" : "5 Apr 2018 17:11:32 GMT",
+  "categories" : [ "Irrelevant" ],
+  "indicatorTerms" : [ "PA", "Job:" ],
+  "priority" : "Low",
+  "text" : "PA Job: http://t.co/tIDae3rb - Physician Assistant - join Family Practice Team - Peterson AFB, Colorado Springs, ... http://t.co/1DcEmJXb"
+},
+{
+  "postID" : "212326078780424192",
+  "timestamp" : "5 Apr 2018 17:11:55 GMT",
+  "categories" : [ "Irrelevant" ],
+  "indicatorTerms" : [ ],
+  "priority" : "Low",
+  "text" : "The reality is that the fire may clean out trees, buildings and things, but it can't take down the community. #highparkfire"
+},
+{
+  "postID" : "217338293006761985",
+  "timestamp" : "5 Apr 2018 17:12:12 GMT",
+  "categories" : [ "Irrelevant" ],
+  "indicatorTerms" : [ "tourism" ],
+  "priority" : "Low",
+  "text" : "Wildfires leave Colorado tourism high and dry: The fire in Fort Collins and a new blaze in Colorado Springs are ... http://t.co/QX9lgfYI"
+},
+{
+  "postID" : "218083717283975169",
+  "timestamp" : "5 Apr 2018 17:13:13 GMT",
+  "categories" : [ "Volunteer" ],
+  "indicatorTerms" : [ "#dosomething", "#donate" ],
+  "priority" : "Low",
+  "text" : "So what u can to help #colorado #wildfire #dosomething #donate #careandshare #redcross http://t.co/5Uy9rFKC"
+},
+{
+  "postID" : "217975047061635073",
+  "timestamp" : "6 Apr 2018 10:00:16 GMT",
+  "categories" : [ "Sadness" ],
+  "indicatorTerms" : [ "worries" ],
+  "priority" : "Low",
+  "text" : "Former W MI family worries for CO home: The Bignall family moved to the Colorado Springs area a year ago for wor... http://t.co/vQqUULwT"
+},
+{
+  "postID" : "218717547950907394",
+  "timestamp" : "6 Apr 2018 10:28:32 GMT",
+  "categories" : [ "Video," ],
+  "indicatorTerms" : [ "[LIVESTREAM]" ],
+  "priority" : "Medium",
+  "text" : "[LIVESTREAM] Waldo Caynon Fire Colorado USA http://t.co/tVI7rVLr http://t.co/sFBY5Ka1"
+},
+{
+  "postID" : "220127198990974976",
+  "timestamp" : "6 Apr 2018 10:31:06 GMT",
+  "categories" : [ "Image," ],
+  "indicatorTerms" : [ "Photo" ],
+  "priority" : "Medium",
+  "text" : "Wildfires ravage Colorado | Photo Gallery - Yahoo! News http://t.co/BFW7HZbA via @YahooNews"
+},
+{
+  "postID" : "218803594097467392",
+  "timestamp" : "6 Apr 2018 10:39:08 GMT",
+  "categories" : [ "Money" ],
+  "indicatorTerms" : [ "Charity", "Raising", "funds" ],
+  "priority" : "Low",
+  "text" : "RT @TwitchTV: The Creatures 24 Hour Charity Marathon is underway http://t.co/mt2WK6H7 Raising funds for Colorado fire relief efforts"
+},
+{
+  "postID" : "218790776304443392",
+  "timestamp" : "6 Apr 2018 10:40:06 GMT",
+  "categories" : [ ],
+  "indicatorTerms" : [ "Charity", "Raising", "funds" ],
+  "priority" : "Low",
+  "text" : "RT @AtheneLOL: The Creatures are doing a 24hr charity stream for victims of the Colorado fires (Red Cross &amp; Firefighters): http://t. ..."
+},
+{
+  "postID" : "218797390717657090",
+  "timestamp" : "6 Apr 2018 10:40:06 GMT",
+  "categories" : [ ],
+  "indicatorTerms" : [ "Charity", "Raising", "funds" ],
+  "priority" : "Low",
+  "text" : "The Creatures are doing a 24hr charity stream for victims of the Colorado fires(Red Cross &amp; Firefighters) http://t.co/8RolhZf4"
+},
+{
+  "postID" : "218832379597426688",
+  "timestamp" : "6 Apr 2018 10:40:06 GMT",
+  "categories" : [ ],
+  "indicatorTerms" : [ "Charity", "Raising", "funds" ],
+  "priority" : "Low",
+  "text" : "@RedCross These guys are raising money to donate to your efforts in the colorado wildfires. please retweet http://t.co/qj4klSrg"
+},
+{
+  "postID" : "214808100107059201",
+  "timestamp" : "6 Apr 2018 10:40:06 GMT",
+  "categories" : [ ],
+  "indicatorTerms" : [ "Charity", "Raising", "funds" ],
+  "priority" : "Low",
+  "text" : "Art benefit will be in August. New venues added to venue list raising donations. http://t.co/w9WVzxtW #highparkfire"
+},
+{
+  "postID" : "218829951099613184",
+  "timestamp" : "6 Apr 2018 10:40:06 GMT",
+  "categories" : [ ],
+  "indicatorTerms" : [ "Charity", "Raising", "funds" ],
+  "priority" : "Low",
+  "text" : "@chugaaconroy The Creatures are doing a 24hr charity stream for victims of the Colorado fires(Red Cross &amp; Firefighters) http://t.co/mhb0vNQJ"
+},
+{
+  "postID" : "218789169873432576",
+  "timestamp" : "6 Apr 2018 10:40:06 GMT",
+  "categories" : [ ],
+  "indicatorTerms" : [ "Charity", "Raising", "funds" ],
+  "priority" : "Low",
+  "text" : "@Totalbiscuit The Creatures are doing a 24hr charity stream for victims of the Colorado fires(Red Cross &amp; Firefighters) http://t.co/g91G9blG"
+},
+{
+  "postID" : "218801543078612993",
+  "timestamp" : "6 Apr 2018 10:40:06 GMT",
+  "categories" : [ ],
+  "indicatorTerms" : [ "Charity", "Raising", "funds" ],
+  "priority" : "Low",
+  "text" : "24 Hour Colorado Fire Charity Stream http://t.co/fUaalzyU"
+},
+{
+  "postID" : "218810749550739456",
+  "timestamp" : "6 Apr 2018 10:40:06 GMT",
+  "categories" : [ ],
+  "indicatorTerms" : [ "Charity", "Raising", "funds" ],
+  "priority" : "Low",
+  "text" : "@ChilledChaos If you have time could you do a shout-out for the Creatures charity stream for the Colorado Wildfires? http://t.co/18MIitkH"
+},
+{
+  "postID" : "218516296860581890",
+  "timestamp" : "6 Apr 2018 10:40:07 GMT",
+  "categories" : [ ],
+  "indicatorTerms" : [ "Charity", "Raising", "funds" ],
+  "priority" : "Low",
+  "text" : "Raising funds to get oxygen masks for the pets in the Colorado fires http://t.co/eRvUMeen"
+}
+]}
+]}

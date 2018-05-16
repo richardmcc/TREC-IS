@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+
+@import play.mvc.Http.Context.Implicit._
+
+<html>
+  <head>
+    <title>TREC Incident Streams - Assessment Interface</title>
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+    <script src="https://code.jquery.com/jquery-2.1.1.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.1/jquery-ui.js"></script>
+    <!-- a jQuery UI theme, here I use "flick" -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/flick/jquery-ui.css">
+
+    <script src="@routes.Assets.at("javascripts/vex.combined.min.js")"></script>
+    <script>vex.defaultOptions.className = 'vex-theme-os';</script>
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/vex.css")"/>
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/vex-theme-os.css")"/>
+    
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+	<!--  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css"> -->
+
+	<!--  <link rel="stylesheet" href="http://openlayers.org/en/v3.16.0/css/ol.css" type="text/css">
+    <script src="http://openlayers.org/en/v3.16.0/build/ol.js"></script> -->
+
+
+	<link rel="stylesheet" href="@routes.Assets.at("javascripts/themes/default/style.min.css")"/>
+	<script src="@routes.Assets.at("javascripts/jstree.min.js")"></script>
+
+	<link rel="stylesheet" href="@routes.Assets.at("stylesheets/default.css")"/>
+	</head>
+
+  	<body id="myBody" wsdata="@routes.TRECIS_TweetGroupAnnotator.ws.webSocketURL(request)" onload="openWebSocketConnection()">
+
+		<div class="container" id="mainContainer">
+
+		<div class="row">
+          <div class="col-md-12">
+
+			<div class="list-group">
+  				<div href="#" class="list-group-item active">
+    				<h4 class="list-group-item-heading">TREC-IS</h4>
+    				<p class="list-group-item-text">v1 Ontology and Keyword Annotator</p>
+  				</div>
+			</div>
+			<nav aria-label="breadcrumb">
+  				<ol class="breadcrumb">
+    				<li class="breadcrumb-item" id="loginBreadcrumb"></li>
+    				<li class="breadcrumb-item" id="eventsBreadcrumb"></li>
+    				<li class="breadcrumb-item active" aria-current="page" id="annotationBreadcrumb"></li>
+  				</ol>
+			</nav>
+			
+			<nav aria-label="breadcrumb">
+  				<ol class="breadcrumb">
+  					<li class="breadcrumb-item">System Status</li>
+    				<li class="breadcrumb-item" id="statusMessage">Initalizing...</li>
+				</ol>
+			</nav>
+		</div>
+
+		</div>
+
+
+		<div id="dynamicContentDiv"></div>
+		
+
+       <div id="info" style="visibility: hidden" ></div>
+       </div>
+       
+       
+       <script type="text/javascript">
+       
+       var ws;
+       var annotatorID = null;
+       var eventIdentifier = null;
+       var currentTweetID = null;
+       var currentCategories = null;
+       var indicatorTerms = null;
+       var currentPriorityLevel = null;
+       
+       var treeDiv = null;
+       
+       function openWebSocketConnection() {
+    	   
+    	   var wsURL = document.getElementById("myBody").getAttribute("wsdata");
+    	   
+           ws = new WebSocket(wsURL);
+           ws.onmessage = function (event) {
+               var message;
+               message = JSON.parse(event.data);
+               switch (message.messagetype) {
+                   case "init":
+                	   annotatorID = message.annotatorID;
+                	   eventIdentifier = message.eventIdentifier;
+                	   
+                	   readyBreadcrumbs();
+                	   
+                	   
+                	   ws.send(JSON.stringify({
+                       	  messagetype: "checkUserAndEventStatus",
+                       	  annotatorID: annotatorID,
+                       	  eventIdentifier: eventIdentifier
+                   	   }));
+                	   break;
+                   case "statusMessage":
+                	   console.log(message);
+                	   updateStatusMessage(message);
+                   	   break;
+                   case "userReady":
+                	   onUserReady();
+                   	   break;
+                   case "nextTweet":
+                	   cleanDynamicContent();
+                	   renderTweet(message);
+                   	   break;
+                   case "selectIndicatorTerms":
+                	   requestIndicatorTerms();
+                   	   break;
+                   case "indicatorTerms":
+                	   renderTermsSelector(message);
+                   	   break;
+                   case "indicatorTermsSaved":
+                	   cleanInputPane();
+                	   requestPriority(message);
+                   	   break;
+                   case "prioritySaved":
+                	   cleanDynamicContent();
+                	   //requestRelatedTweets(message);
+                	   openNextPage();
+                   	   break;
+                   case "matchingTweetFound":
+                	   addTweetToSimilarList(message);
+                   	   break;
+                   case "matchingTweetSearchDone":
+                	   onSearchComplete(message);
+                   	   break;	
+                   default:
+                       return console.log(message);
+               }
+               
+               
+           };
+           
+           
+           
+           
+       }
+       
+       function readyBreadcrumbs() {
+    	   document.getElementById("loginBreadcrumb").innerHTML = "<a href='/trecis/login'>Login</a>";
+    	   document.getElementById("eventsBreadcrumb").innerHTML = "<a href='/trecis/events?annotatorID="+annotatorID+"'>Select Events for "+annotatorID+"</a>";
+    	   document.getElementById("annotationBreadcrumb").innerHTML = "Annotating "+eventIdentifier;
+       }
+       
+       function updateStatusMessage(message) {
+    	   document.getElementById("statusMessage").innerHTML = message.text;
+       }
+       
+       function onUserReady() {
+    	   document.getElementById("statusMessage").innerHTML = "Requesting next tweet to annotate";
+    	   
+    	   currentTweetID = null;
+           currentCategories = null;
+           indicatorTerms = null;
+           currentPriorityLevel = null;
+    	   
+    	   ws.send(JSON.stringify({
+            	  messagetype: "getNextTweetForUser",
+            	  annotatorID: annotatorID,
+            	  eventIdentifier: eventIdentifier
+           }));
+       }
+       
+       function cleanDynamicContent() {
+    	   while (document.getElementById('dynamicContentDiv').hasChildNodes()) {
+               document.getElementById('dynamicContentDiv').removeChild(document.getElementById('dynamicContentDiv').lastChild);
+           }
+       }
+       
+       function cleanInputPane() {
+    	   while (document.getElementById('inputPane').hasChildNodes()) {
+               document.getElementById('inputPane').removeChild(document.getElementById('inputPane').lastChild);
+           }
+       }
+       
+       function requestIndicatorTerms() {
+    	   document.getElementById("statusMessage").innerHTML = "Checking tweet for past term-level labels...";
+    	   cleanInputPane();
+    	   ws.send(JSON.stringify({
+            	  messagetype: "requestIndicatorTerms",
+            	  annotatorID: annotatorID,
+            	  tweetID: currentTweetID,
+            	  eventIdentifier: eventIdentifier
+        	   }));
+       }
+       
+       function renderTermsSelector(message) {
+    	   
+    	   var terms = JSON.parse(message.tweetAsTerms);
+    	   
+    	   for ( var i = 0; i < terms.length; i++ ) {
+          		//<button type="button" class="btn btn-light">Light</button>
+      	   		var word = terms[i];
+      	   		var label = document.createElement('button');
+      	   		label.className = "term btn btn-light";
+      	 		label.setAttribute("id", word);
+      	 		label.setAttribute("type", "button");
+      	 		label.setAttribute("style", "display:inline-block");
+      			label.innerHTML = word;
+      			label.addEventListener("click", function(event){
+      				addGenericKeyTerm(event.target.getAttribute("id"));
+   			}, false); 
+      			label.addEventListener('contextmenu', function(ev) {
+      			    ev.preventDefault();
+      			    console.log(ev.target.getAttribute("id"));
+      			 	//addEventKeyTerm(ev.target.getAttribute("id"));
+      			    return false;
+      			}, false);
+      			
+           	document.getElementById('inputPane').appendChild(label);
+      	   }
+    	   
+    	   var termsSelectedButton = document.createElement('button');
+    	   termsSelectedButton.className = "btn btn-warning";
+    	   termsSelectedButton.setAttribute("style", "margin-top: 15px");
+    	   termsSelectedButton.setAttribute("onclick", "saveIndicatorTerms()");
+    	   termsSelectedButton.innerHTML = "Done Selecting Terms (move to next screen)";
+    	   document.getElementById('inputPane').appendChild(termsSelectedButton);
+    	   
+    	   document.getElementById("statusMessage").innerHTML = "Awaiting Input: Select one or more terms that indicate the selected category";
+    	   
+       }
+       
+       function requestPriority() {
+    	   document.getElementById("statusMessage").innerHTML = "Awaiting Input: Select a priority level";
+    	   
+    	   var priorityList = document.createElement('card');
+    	   priorityList.className = "card border-light mb-3 text-black";
+    	   priorityList.innerHTML = "<ul class='list-group'>"+
+    	      "<li class='list-group-item d-flex justify-content-between align-items-center' style='color: #000' onclick=\"setPriority('Critical')\">Critical (Notify immediately)</li>"+
+    	      "<li class='list-group-item d-flex justify-content-between align-items-center' style='color: #000' onclick=\"setPriority('High')\">High (Should be viewed by officer)</li>"+
+    	      "<li class='list-group-item d-flex justify-content-between align-items-center' style='color: #000' onclick=\"setPriority('Medium')\">Medium (May be of interest, but can be viewed later)</li>"+
+    	      "<li class='list-group-item d-flex justify-content-between align-items-center' style='color: #000' onclick=\"setPriority('Low')\">Low (Can be safely ignored)</li>"+
+    	      "</ul>";
+    	   document.getElementById('inputPane').appendChild(priorityList);
+       }
+       
+       function setPriority(level) {
+    	   
+    	   document.getElementById("statusMessage").innerHTML = "Saving priority...";
+    	   
+    	   console.log(level);
+    	   
+    	   currentPriorityLevel = level;
+    	   
+    	   ws.send(JSON.stringify({
+          	  messagetype: "setPriority",
+          	  annotatorID: annotatorID,
+          	  tweetID: currentTweetID,
+          	  eventIdentifier: eventIdentifier,
+          	  priority: level
+      	   }));
+       }
+       
+       function saveIndicatorTerms() {
+    	   var highlightedButtons = document.getElementsByClassName("term btn btn-danger");
+    	   
+    	   var highlightedTermList = "";
+    	   
+    	   var i;
+           for (i = 0; i < highlightedButtons.length; i++) {
+        	   
+        	   var highlightedButton = highlightedButtons[i];
+        	   
+        	   if (highlightedTermList.length == 0) highlightedTermList=highlightedButton.getAttribute("id");
+        	   else highlightedTermList=highlightedTermList+","+highlightedButton.getAttribute("id");
+           }
+           
+           indicatorTerms = highlightedTermList;
+           
+           ws.send(JSON.stringify({
+         	  messagetype: "saveIndicatorTerms",
+         	  annotatorID: annotatorID,
+         	  tweetID: currentTweetID,
+         	  eventIdentifier: eventIdentifier,
+         	  indicatorTerms: highlightedTermList
+     	   }));
+    	   
+       }
+       
+       function addGenericKeyTerm(word) {   
+		   if (document.getElementById(word).className === "term btn btn-danger") document.getElementById(word).className="term btn btn-light";
+		   else document.getElementById(word).className="term btn btn-danger";
+	   }
+       
+       function requestRelatedTweets(message) {
+    	   document.getElementById("statusMessage").innerHTML = "Terms Saved, looking up database for other tweets with the same terms...";
+    	   
+    	   var similarTweetsCard = document.createElement('div');
+    	   similarTweetsCard.className = "card text-white bg-primary";
+    	   similarTweetsCard.innerHTML = "<div class='row' >"+
+    	       "<div class='col-md-6'>"+
+    	          "<div class='card text-white bg-primary' id='matchedTerms'>"+
+    	             "<span class='badge badge-primary'>Matched Terms</span>"+
+    	          "</div>"+
+    	       "</div>"+
+    	       "<div class='col-md-6' id='tweetPane'></div>"+
+    	    "</div>"+
+    	    "<div class='row'><div class='col-md-12' id='doneMatchButton'></div>"+
+    	    "</div>"+
+    	    "<div class='row'>"+
+    	    "<div class='col-md-6' id='similar'>"+
+    	       "<span class='badge badge-primary'>Tweets To Assign the Same Categories:</span>"+
+    	   	"</div>"+
+    	   	"<div class='col-md-6' id='dissimilar'>"+
+    	   	   "<span class='badge badge-primary'>Tweets to Judge Separately:</span>"+
+    	   	"</div>";
+    	   document.getElementById("dynamicContentDiv").appendChild(similarTweetsCard);	
+
+    	   var indicatorTermsAsArray = indicatorTerms.split(",");
+    	   
+    	   var i;
+           for (i = 0; i < indicatorTermsAsArray.length; i++) {
+
+        	   var catButton = document.createElement('button');
+        	   catButton.className = "btn btn-info";
+        	   catButton.innerHTML = indicatorTermsAsArray[i];
+        	   document.getElementById("matchedTerms").appendChild(catButton);	
+        	   
+           }
+    	   
+    	   addCategoriesInformationToTweetPane(currentCategories);
+    	   
+    	   ws.send(JSON.stringify({
+          	  messagetype: "requestRelatedTweets",
+          	  annotatorID: annotatorID,
+          	  tweetID: currentTweetID,
+          	  eventIdentifier: eventIdentifier,
+          	  indicatorTerms: indicatorTerms
+      	   }));
+       }
+       
+       function addTweetToSimilarList(message) {
+    	   var tweet = document.createElement('div');
+    	   tweet.innerHTML = "<div class='card-header' id='"+message.tweetID+"' column='similar' onclick='moveTweet(\""+message.tweetID+"\")'>"+message.text+"</div>";
+    	   document.getElementById("similar").appendChild(tweet);	
+       }
+       
+       function moveTweet(tweetID) {
+    	   
+    	   var tweet = document.getElementById(tweetID);
+    	   
+    	   if (tweet.getAttribute("column") === "similar") {
+    		   tweet.parentNode.removeChild(tweet);
+    		   tweet.setAttribute("column", "dissimilar")
+    		   document.getElementById("dissimilar").appendChild(tweet);
+    	   } else {
+    		   tweet.parentNode.removeChild(tweet);
+    		   tweet.setAttribute("column", "similar")
+    		   document.getElementById("similar").appendChild(tweet);
+    	   }
+       }
+       
+       function onSearchComplete(message) {
+    	   
+    	   if (message.matches === "0") {
+    		   document.getElementById("statusMessage").innerHTML = "Found "+message.matches+" matches, continuing...";
+    		   openNextPage();
+    	   } else {
+    		   document.getElementById("statusMessage").innerHTML = "Found "+message.matches+" matches, awaiting input: Move any tweets that do not match the categories into the right column.";
+    		   var button = document.createElement('card');
+    		   button.className = "text-white bg-primary";
+    		   button.innerHTML = "<button class='term btn btn-warning' onclick='saveAdditionalMatches()'>Done (move to next screen)</button>";
+        	   document.getElementById("doneMatchButton").appendChild(button);
+    	   }
+       }
+       
+       function saveAdditionalMatches() {
+    	   document.getElementById("statusMessage").innerHTML = "Saving additional category assessments...";
+    	   
+    	   
+    	   var ancestor = document.getElementById('similar');
+    	   var descendents = ancestor.getElementsByTagName('*');
+    	   
+    	   var i, e, d;
+    	   for (i = 0; i < descendents.length; ++i) {
+    	       e = descendents[i];
+    	       
+    	       ws.send(JSON.stringify({
+    	          	  messagetype: "saveAnnotation",
+    	          	  annotatorID: annotatorID,
+    	          	  tweetID: e.getAttribute("id"),
+    	          	  eventIdentifier: eventIdentifier,
+    	          	  currentCategories: currentCategories,
+    	          	  indicatorTerms: indicatorTerms,
+    	          	  priority: currentPriorityLevel
+    	      	   }));
+    	   }
+    	   
+    	   openNextPage();
+       }
+       
+       function renderTweet(message) {
+    	   var jsonTweet = JSON.parse(message.tweetJSON);
+    	   
+    	   currentTweetID = jsonTweet.id_str;
+    	   
+    	   var tweetCard = document.createElement('div');
+    	   tweetCard.className = "card text-white bg-primary";
+    	   tweetCard.innerHTML = "<div class='row'>"+
+    	    "<div class='col-md-6' id='tweetPane'>"+
+    	       "<span class='badge badge-primary'>Tweet Rendered by Twitter</span>"+
+    	   	   "<div class='card-body aTweet' tweetID='"+jsonTweet.id_str+"'></div>"+
+    	   	   "<span class='badge badge-primary'>Tweet Text</span>"+
+    	   	   "<div class='card-header'>"+jsonTweet.text+"</div>"+
+    	   	"</div>"+
+    	   	"<div class='col-md-6' id='inputPane'>"+
+    	   	   "<div class='row' style='padding-bottom: 15px'>"+
+    	   	      "<div class='col-md-12'>"+
+    	   	         "<button type='button' class='btn btn-danger' onclick='deleteTweet()'>Tweet contains no relevant information (delete)</button>"+
+    	   	         "<button type='button' class='btn btn-warning' onclick='skipTweet()'>Skip Tweet</button>"+
+    	   	      "</div>"+
+    	   	   "</div>"+
+    	   	   "<div id='treeInsert'></div>"+
+    	   	"</div>";
+    	   document.getElementById("dynamicContentDiv").appendChild(tweetCard);	
+    	   
+    	   renderTweets("aTweet");
+    	   renderTreeSimple(JSON.parse(message.categoriesJSON));
+    	   
+    	   document.getElementById("statusMessage").innerHTML = "[ "+message.remaining+" remaining ] Awaiting Input: Select relevant Categories or mark as Uninformative";
+       }
+       
+       function renderTreeSimple(categoriesJSON) {
+    	   
+    	   var jsonInformationTypes = categoriesJSON.informationTypes;
+    	   
+    	   for (i = 0; i < jsonInformationTypes.length; ++i) {
+    	       var type = jsonInformationTypes[i];
+    	       console.log(type);
+    	       var intent = type.intentType;
+    	       
+    	       var intentDIV = document.getElementById("intentDIV-"+intent);
+    	       
+    	       if (intentDIV==null) {
+    	    	   intentDIV = document.createElement('div');
+    	    	   intentDIV.setAttribute("id", "intentDIV-"+intent);
+    	    	   document.getElementById("treeInsert").appendChild(intentDIV);
+    	    	   
+    	    	   
+    	    	   console.log(intent);
+    	    	   
+    	    	   var intentlabel = document.createElement('div');
+    	    	   intentlabel.innerHTML = "<span class='label label-primary'>"+intent+"</span>";
+    	    	   document.getElementById("intentDIV-"+intent).appendChild(intentlabel);
+    	    	   
+    	       }
+    	       
+    	       var it = type.id.split("-")[1];
+    	       
+    	       var label = document.createElement('button');
+     	   		label.className = "term btn btn-light";
+     	 		label.setAttribute("id", it+"-button");
+     	 		label.setAttribute("data-toggle", "tooltip");
+     	 		label.setAttribute("title", type.desc);
+     	 		label.setAttribute("type", "button");
+     	 		label.setAttribute("style", "display:inline-block");
+     			label.innerHTML = type.id.split("-")[1];
+     			label.addEventListener("click", function(event){
+     				var arrayStr = "[\""+event.target.innerHTML+"\"]";
+     				console.log(arrayStr);
+     				categorySelected(JSON.parse(arrayStr));
+     				saveCategories();
+  				}, false); 
+     			label.addEventListener('contextmenu', function(ev) {
+     			    ev.preventDefault();
+     			 	//addEventKeyTerm(ev.target.getAttribute("id"));
+     			    return false;
+     			}, false);
+     			
+          	document.getElementById("intentDIV-"+intent).appendChild(label);
+    	       
+    	   }
+    	   
+       }
+       
+       function renderTree(categoriesJSON) {
+    	   
+    	   
+    	   
+    	   if (treeDiv==null) {
+    		   treeDiv = document.createElement('div');
+    		   treeDiv.setAttribute("id", "jstree_demo_div");
+    		   document.getElementById("treeInsert").appendChild(treeDiv);
+    		   
+    		   
+    		   $('#jstree_demo_div').jstree({
+        		   "core" : {
+        		     "animation" : 0,
+        		     "check_callback" : true,
+        		     "themes" : { "stripes" : true },
+        		     'data' : categoriesJSON
+        		   },
+        		   "types" : {
+        		     "#" : {
+        		       "max_children" : 1,
+        		       "max_depth" : 4,
+        		       "valid_children" : ["root"]
+        		     },
+        		     "root" : {
+        		       "icon" : "/static/3.3.5/assets/images/tree_icon.png",
+        		       "valid_children" : ["default"]
+        		     },
+        		     "default" : {
+        		       "valid_children" : ["default","file"]
+        		     },
+        		     "file" : {
+        		       "icon" : "glyphicon glyphicon-file",
+        		       "valid_children" : []
+        		     }
+        		   },
+        		   "plugins" : [
+        		     "contextmenu", "dnd", "search",
+        		     "state", "types", "wholerow"
+        		   ]
+        		 });
+        	   
+    		   $('#jstree_demo_div').bind("loaded.jstree", function (event, data) {
+    			   $('#jstree_demo_div').jstree("close_all", -1);
+       	        });
+    		   
+    		   $('#jstree_demo_div').bind("refresh.jstree", function (event, data) {
+    			   $('#jstree_demo_div').jstree("close_all", -1);
+          	        });
+    		   
+        	   $('#jstree_demo_div').on("changed.jstree", function (e, data) {
+        		   categorySelected(data.selected);
+        		 });
+    	   } else {
+    		   document.getElementById("treeInsert").appendChild(treeDiv);
+    	   }
+    	   
+    	   
+    	   
+    	   
+       }
+       
+       function closeTree() {
+    	   $('#jstree_demo_div').jstree("close_all", -1);
+       }
+       
+       function categorySelected(selectedCategories) {
+    	   currentCategories = selectedCategories;
+    	   console.log(currentCategories);
+       }
+       
+       
+       
+       function deleteTweet() {
+    	   ws.send(JSON.stringify({
+            	  messagetype: "irrelevantTweet",
+            	  tweetID: currentTweetID,
+            	  annotatorID: annotatorID,
+            	  eventIdentifier: eventIdentifier
+        	   }));
+    	   currentCategories = JSON.parse('["Irrelevant"]');
+    	   addCategoriesInformationToTweetPane(currentCategories);
+       }
+       
+       function skipTweet() {
+    	   ws.send(JSON.stringify({
+            	  messagetype: "saveAnnotation",
+            	  tweetID: currentTweetID,
+            	  annotatorID: annotatorID,
+            	  eventIdentifier: eventIdentifier,
+            	  indicatorTerms: "",
+            	  currentCategories: "Skipped",
+            	  priority: "Lowest"
+        	   }));
+    	   openNextPage();
+       }
+       
+	   function saveCategories() {
+		   //console.log(currentCategories);
+		   if (currentCategories.length == 0) alert("No categories selected, select a category before continuing");
+		   else {
+			   ws.send(JSON.stringify({
+	            	  messagetype: "saveCategories",
+	            	  tweetID: currentTweetID,
+	            	  annotatorID: annotatorID,
+	            	  eventIdentifier: eventIdentifier,
+	            	  categories: currentCategories
+	        	   }));
+			   addCategoriesInformationToTweetPane(currentCategories);
+		   }
+       }
+	   
+	   function addCategoriesInformationToTweetPane(currentCategories) {
+		   
+		   
+    	   
+    	   var categoriesPane = document.createElement('div');
+    	   categoriesPane.className = "card text-white bg-primary";
+    	   categoriesPane.setAttribute("id", "selectedCategories");
+    	   categoriesPane.innerHTML = "";
+    	   document.getElementById("tweetPane").appendChild(categoriesPane);
+		   
+    	   var headerBadge = document.createElement('span');
+    	   headerBadge.className = "badge badge-primary";
+    	   headerBadge.innerHTML = "Selected Categories";
+    	   document.getElementById("selectedCategories").appendChild(headerBadge);
+    	   
+		   var i;
+           for (i = 0; i < currentCategories.length; i++) {
+
+        	   var catButton = document.createElement('button');
+        	   catButton.className = "btn btn-info";
+        	   catButton.innerHTML = currentCategories[i];
+        	   document.getElementById("selectedCategories").appendChild(catButton);	
+        	   
+           }
+	   }
+        
+       function renderEvents(message) {
+  	   		var jsonEvents = JSON.parse(message.eventList);
+  	   		
+  	   		for ( var i = 0; i < jsonEvents.length; i++ ) {
+      		
+  	   			var event = jsonEvents[i];
+  	   			
+  	   			var li = document.createElement('div');
+  	   			li.className = "card";
+				li.innerHTML = "<div onclick=\"openNextPage('"+event.identifier+"')\">"+
+				"<h5 class=\"card-header\">"+event.name+"</h5>"+
+				"<img style=\"height: 200px; width: 100%; display: block;\" src=\""+event.imageURL+"\" alt=\"Card image\">"+
+				"<p class=\"card-text\">"+event.description+"</p>"+
+				"</div>";
+				
+				document.getElementById("events").appendChild(li);	
+  	   		}
+      }
+       
+       function openNextPage() {
+    	   
+    	   $('#jstree_demo_div').empty();
+    	   
+    	   window.open("/trecis/annotateEvent?annotatorID="+annotatorID+"&identifier="+eventIdentifier,"_self"); 
+       }
+       
+       
+       window.twttr = (function (d, s, id) {
+           var js, fjs = d.getElementsByTagName(s)[0],
+                   t = window.twttr || {};
+           if (d.getElementById(id))
+               return t;
+           js = d.createElement(s);
+           js.id = id;
+           js.src = "https://platform.twitter.com/widgets.js";
+           fjs.parentNode.insertBefore(js, fjs);
+           t._e = [];
+           t.ready = function (f) {
+               t._e.push(f);
+           };
+           return t;
+       }(document, "script", "twitter-wjs"));
+       
+	   function renderTweets(divclass) {
+
+           var x = document.getElementsByClassName(divclass);
+           var i;
+           for (i = 0; i < x.length; i++) {
+               var id = x[i].getAttribute("tweetID");
+               twttr.widgets.createTweet(
+                       id, x[i],
+                       {
+                           conversation: 'none', // or all
+                           linkColor: '#cc0000', // default is blue
+                           theme: 'light'    // or dark
+                       });
+
+           }
+       }
+	   
+       </script>
+       
+       
+       </body>
+
+</html>

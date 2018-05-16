@@ -1,0 +1,15 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+GET     /trecis/app                controllers.TRECIS_OntologyAnnotation.index
+GET     /trecis/appws                controllers.TRECIS_OntologyAnnotation.ws
+GET     /trecis/login                controllers.TRECIS_AnnotatorSelect.index
+GET     /trecis/loginws                controllers.TRECIS_AnnotatorSelect.ws
+GET     /trecis/events                controllers.TRECIS_EventsSelect.index(annotatorID: String ?= "")
+GET     /trecis/eventsws                controllers.TRECIS_EventsSelect.ws
+GET     /trecis/annotateEvent                controllers.TRECIS_TweetGroupAnnotator.index(annotatorID: String ?= "", identifier: String ?= "")
+GET     /trecis/annotateEventws                controllers.TRECIS_TweetGroupAnnotator.ws
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
